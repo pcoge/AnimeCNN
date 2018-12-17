@@ -13,7 +13,7 @@ from keras.utils import np_utils
 %matplotlib inline
 
 #------------変数宣言------------
-img_size = 64
+img_size = 32
 #csvのファイルパスを記載
 csv_filepath = 'filename.csv'
 #水増し処理の種類を記載
@@ -37,11 +37,9 @@ for i,fname in enumerate(fnames):
     #解像度を変えて、画像を読み込む
     temp_img = load_img(fname, target_size=(img_size,img_size))
 
-    #画像を配列に変換し0-1で正規化
+    #画像を配列に変換
     img_train[i] = img_to_array(temp_img)
-    
-#正解ラベルをOne-Hot表現に変換
-label_train = np_utils.to_categorical(labels,10)
+
 
 #%%
 #ちゃんと読み込まれたか確認する
@@ -50,7 +48,7 @@ plt.figure(figsize=(8, 8))
 for i in range(9):
     plt.subplot(3,3,i+1)
     j = np.random.randint(fnames_total)
-    print(j)
+    print(j,labels[j])
     plt.imshow(img_train[j]/255)
 
 #%%
@@ -70,12 +68,21 @@ gen = datagen.flow(img_train, batch_size=fnames_total)
 
 #%%
 print(img_train.shape)
+print(labels.shape)
+img_train_pro = list(img_train)
+label_train_pro = list(labels)
+
 for i in range(img_add):
-    batches = next(gen)  # (NumBatches, Height, Width, Channels) の4次元データを返す。
-    img_train = np.vstack((img_train, batches))
-print(img_train.shape)
+    batches = next(gen)
+    print(gen)  # (NumBatches, Height, Width, Channels) の4次元データを返す。
+    img_train_pro = np.vstack((img_train_pro, batches))
+print(img_train_pro.shape)
+#print(label_train_pro.shape)
+
 #正規化する
-img_train = img_train/255
+img_train_pro = img_train_pro/255
+#正解ラベルをOne-Hot表現に変換
+#label_train = np_utils.to_categorical(labels,10)
 
 #%%
 #ちゃんと読み込まれたか確認する
@@ -83,9 +90,12 @@ img_train = img_train/255
 plt.figure(figsize=(16, 16))
 for i in range(36):
     plt.subplot(6,6,i+1)
-    j = np.random.randint(fnames_total*(1+img_add))
+#    j = np.random.randint(fnames_total*(img_add+1))
+    j = 940+i
     print(j)
-    plt.imshow(img_train[j])
+    plt.imshow(img_train_pro[j])
+
+
 
 #%%
 #モデルを構築
