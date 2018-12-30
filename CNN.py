@@ -46,7 +46,8 @@ test_generator = test_datagen.flow_from_directory(
     test_dir,
     target_size=(image_size, image_size),
     batch_size=batch_size,
-    class_mode="categorical")
+    class_mode="categorical"
+)
 
 num_categories=10
 
@@ -80,14 +81,31 @@ checkpoint_cb = ModelCheckpoint(".\\snapshot\\{epoch:03d}-{val_loss:.5f}.hdf5", 
 num_train_images = 853
 num_test_images = 93
 
-
-model.fit_generator(
+history = model.fit_generator(
     train_generator,
-    steps_per_epoch=num_train_images // batch_size,
-    epochs=3,
+    steps_per_epoch=128,
+    epochs=1000,
     validation_data=test_generator,
     validation_steps=batch_size,
     callbacks=[checkpoint_cb]
 )
+
+# 精度の履歴のプロット
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.xlabel('epoch')
+plt.ylabel('accuracy')
+plt.legend(['acc', 'val_acc'], loc='lower right')
+plt.show()
+
+# 損失の履歴をプロット
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['loss', 'val_loss'], loc='lower right')
+plt.show()
 
 #%%
