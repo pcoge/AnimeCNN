@@ -17,7 +17,7 @@ from keras.callbacks import ModelCheckpoint
 
 #------------変数宣言------------
 #画像の解像度
-image_size = 32
+image_size = 256
 #バッチサイズ
 batch_size = 8
 #学習データの格納先
@@ -84,7 +84,7 @@ num_test_images = 93
 history = model.fit_generator(
     train_generator,
     steps_per_epoch=128,
-    epochs=1000,
+    epochs=300,
     validation_data=test_generator,
     validation_steps=batch_size,
     callbacks=[checkpoint_cb]
